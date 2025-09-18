@@ -35,7 +35,10 @@ func (c *Cache) Add(key string, val []byte) error {
 		return errors.New("key already exist")
 	}
 
-	c.cacheEntries[key] = cacheEntry{createdAt: time.Now(), val: val}
+	c.cacheEntries[key] = cacheEntry{
+		createdAt: time.Now().UTC(),
+		val:       val,
+	}
 
 	return nil
 }
@@ -61,7 +64,7 @@ func (c *Cache) reapLoop() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	now := time.Now()
+	now := time.Now().UTC()
 
 	for key, entry := range c.cacheEntries {
 

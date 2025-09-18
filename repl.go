@@ -13,6 +13,7 @@ import (
 type httpConfig struct {
 	pokeapiClient    pokeapi.Client
 	pokeCache        *pokecache.Cache
+	param            string
 	nextLocationsURL *string
 	prevLocationsURL *string
 }
@@ -32,6 +33,10 @@ func startRepl(cfg *httpConfig) {
 		}
 
 		commandName := inputRes[0]
+		if len(inputRes) >= 2 {
+			cfg.param = inputRes[1]
+		}
+
 		command, exists := getCommands()[commandName]
 		if exists {
 			err := command.callback(cfg)
@@ -73,6 +78,11 @@ func getCommands() map[string]cliCommand {
 			name:        "mapb",
 			description: "Get the previous page of locations",
 			callback:    commandMapb,
+		},
+		"explore": {
+			name:        "explore",
+			description: "Explore a location",
+			callback:    commandExplore,
 		},
 		"exit": {
 			name:        "exit",
