@@ -10,36 +10,36 @@ import (
 	"github.com/Cadimodev/pokedexcli/internal/pokecache"
 )
 
-type httpConfig struct {
+type config struct {
 	pokeapiClient    pokeapi.Client
 	pokeCache        *pokecache.Cache
-	param            string
 	nextLocationsURL *string
 	prevLocationsURL *string
+	caughtPokemon    map[string]pokeapi.Pokemon
 }
 
-func startRepl(cfg *httpConfig) {
+func startRepl(cfg *config) {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
-		input := scanner.Text()
-		inputRes := cleanInput(input)
+		input := cleanInput(scanner.Text())
 
-		if len(inputRes) == 0 {
+		if len(input) == 0 {
 			fmt.Println("Error: invalid input!")
 			continue
 		}
 
-		commandName := inputRes[0]
-		if len(inputRes) >= 2 {
-			cfg.param = inputRes[1]
+		commandName := input[0]
+		args := []string{}
+		if len(input) > 1 {
+			args = input[1:]
 		}
 
 		command, exists := getCommands()[commandName]
 		if exists {
-			err := command.callback(cfg)
+			err := command.callback(cfg, args...)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -59,7 +59,7 @@ func cleanInput(text string) []string {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*httpConfig) error
+	callback    func(*config, ...string) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -83,6 +83,11 @@ func getCommands() map[string]cliCommand {
 			name:        "explore",
 			description: "Explore a location",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Try to catch a pokemon",
+			callback:    commandCatch,
 		},
 		"exit": {
 			name:        "exit",

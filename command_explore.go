@@ -1,14 +1,21 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 )
 
-func commandExplore(cfg *httpConfig) error {
+func commandExplore(cfg *config, args ...string) error {
 
-	fmt.Printf("Exploring %s ...\n", cfg.param)
+	if len(args) != 1 {
+		return errors.New("you must provide a location name")
+	}
 
-	pokemonNames, err2 := cfg.pokeapiClient.GetLocationData(cfg.param, cfg.pokeCache)
+	locationName := args[0]
+
+	fmt.Printf("Exploring %s ...\n", locationName)
+
+	pokemonNames, err2 := cfg.pokeapiClient.GetLocationData(locationName, cfg.pokeCache)
 	if err2 != nil {
 		return err2
 	}

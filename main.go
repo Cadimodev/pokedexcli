@@ -12,9 +12,10 @@ func main() {
 	pokeClient := pokeapi.NewClient(5 * time.Second)
 	cache := pokecache.NewCache(6 * time.Hour)
 
-	cfg := &httpConfig{
+	cfg := &config{
 		pokeapiClient: pokeClient,
 		pokeCache:     cache,
+		caughtPokemon: map[string]pokeapi.Pokemon{},
 	}
 
 	startRepl(cfg)

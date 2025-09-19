@@ -16,7 +16,6 @@ func (c *Client) ListLocations(pageURL *string, cache *pokecache.Cache) (RespSha
 		url = *pageURL
 	}
 
-	fmt.Println("URL -> ", url)
 	data, ok := cache.Get(url)
 	if !ok {
 
@@ -54,8 +53,6 @@ func (c *Client) ListLocations(pageURL *string, cache *pokecache.Cache) (RespSha
 
 func (c *Client) GetLocationData(locationName string, cache *pokecache.Cache) ([]string, error) {
 	url := baseURL + "/location-area/" + locationName
-
-	fmt.Println("URL -> ", url)
 
 	data, ok := cache.Get(url)
 	if !ok {
